@@ -244,7 +244,7 @@ $(document).ready(function () {
 
   function startCountdownTimer() {
     stopCountdownTimer();
-    let timeLeft = 5;
+    let timeLeft = 10;
 
     // Start the countdown
     countdownInterval = setInterval(function () {
