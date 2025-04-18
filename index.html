@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Feedback</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container feedback-container">
+      <!-- Satisfaction Rating Section -->
+      <div id="rating-section" class="section active">
+        <div class="card shadow-sm feedback-card">
+          <div class="card-header">
+            <div class="header-content">
+              <div class="logo-container">
+                <img
+                  src="logo.png"
+                  alt="Restaurant Logo"
+                  class="section-logo"
+                />
+              </div>
+              <div class="title-container">
+                <h2 class="mb-0">Hvordan har det været?</h2>
+              </div>
+            </div>
+          </div>
+          <div class="card-body py-4">
+            <div class="rating-box-container">
+              <div class="rating-box" data-value="3">
+                <div class="emoji-container">
+                  <span class="emoji">😄</span>
+                </div>
+                <div class="rating-text">Det var super, vi ses igen!</div>
+              </div>
+              <div class="rating-box" data-value="2">
+                <div class="emoji-container">
+                  <span class="emoji">🙂</span>
+                </div>
+                <div class="rating-text">Ok</div>
+              </div>
+              <div class="rating-box" data-value="1">
+                <div class="emoji-container">
+                  <span class="emoji">😕</span>
+                </div>
+                <div class="rating-text">Kan forbedres</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            © Copyright <strong>Youku</strong>. All Rights Reserved Power by
+            <strong>Yo software</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Waiter Selection Section -->
+      <div id="waiter-section" class="section">
+        <div class="card shadow-sm feedback-card">
+          <div class="card-header">
+            <div class="header-content">
+              <div class="logo-container">
+                <img
+                  src="logo.png"
+                  alt="Restaurant Logo"
+                  class="section-logo"
+                />
+              </div>
+              <div class="title-container">
+                <h2 class="mb-0">Vil du give et klap på skulderen?</h2>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="waiter-container" class="text-center py-3">
+              <!-- Waiters will be loaded dynamically from the API -->
+              <!-- Loading placeholder -->
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                </div>
+                <p class="mt-2">Henter Tjenere...</p>
+              </div>
+            </div>
+            <div class="text-center">
+              <button
+                id="skip-waiter"
+                class="btn btn-secondary btn-lg action-button"
+              >
+                Spring over
+              </button>
+            </div>
+          </div>
+          <div class="card-footer">
+            © Copyright <strong>Youku</strong>. All Rights Reserved Power by
+            <strong>Yo software</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Improvement Areas Section -->
+      <div id="aspects-section" class="section">
+        <div class="card shadow-sm feedback-card">
+          <div class="card-header">
+            <div class="header-content">
+              <div class="logo-container">
+                <img
+                  src="logo.png"
+                  alt="Restaurant Logo"
+                  class="section-logo"
+                />
+              </div>
+              <div class="title-container">
+                <h2 class="mb-0">Hvad kan vi gøre bedre?</h2>
+              </div>
+            </div>
+          </div>
+          <div class="card-body py-4">
+            <div class="improvement-container">
+              <div class="improvement-box" data-category="Food">
+                <div class="improvement-icon">
+                  <i class="fas fa-utensils"></i>
+                </div>
+                <div class="improvement-text">Mad</div>
+              </div>
+              <div class="improvement-box" data-category="Service">
+                <div class="improvement-icon">
+                  <i class="fas fa-concierge-bell"></i>
+                </div>
+                <div class="improvement-text">Service</div>
+              </div>
+              <div class="improvement-box" data-category="Atmosphere">
+                <div class="improvement-icon">
+                  <i class="fas fa-star"></i>
+                </div>
+                <div class="improvement-text">Oplevelse</div>
+              </div>
+            </div>
+            <div class="text-center mt-4">
+              <button
+                id="aspects-action-btn"
+                class="btn btn-secondary btn-lg action-button"
+              >
+                Spring over
+              </button>
+            </div>
+          </div>
+          <div class="card-footer">
+            © Copyright <strong>Youku</strong>. All Rights Reserved Power by
+            <strong>Yo software</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Section -->
+      <div id="confirmation-section" class="section">
+        <div class="card shadow-sm feedback-card">
+          <div class="card-header">
+            <div class="header-content">
+              <div class="logo-container">
+                <img
+                  src="logo.png"
+                  alt="Restaurant Logo"
+                  class="section-logo"
+                />
+              </div>
+              <div class="title-container">
+                <h2 class="mb-0">Tak for bedømmelsen!</h2>
+              </div>
+            </div>
+          </div>
+          <div class="card-body text-center py-5">
+            <i class="fas fa-check-circle confirmation-icon"></i>
+            <p class="lead mb-4">Tak for bedømmelsen!</p>
+
+            <!-- Personalized feedback messages will appear here -->
+            <div id="personalized-feedback" class="feedback-messages mb-4">
+              <!-- Waiter acknowledgment would appear here if selected -->
+              <p id="waiter-acknowledgment" class="mb-2"></p>
+
+              <!-- Improvement acknowledgments would appear here if selected -->
+              <div id="improvement-acknowledgments"></div>
+            </div>
+
+            <p class="mb-0">
+              Din feedback hjælper med at forbedre vores service.
+            </p>
+          </div>
+          <div class="card-footer">
+            © Copyright <strong>Youku</strong>. All Rights Reserved Power by
+            <strong>Yo software</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script src="api.js"></script>
+    <script src="feedback.js"></script>
+  </body>
+</html>
