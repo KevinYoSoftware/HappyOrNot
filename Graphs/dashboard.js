@@ -20,6 +20,20 @@ document.addEventListener("DOMContentLoaded", function () {
       loadDashboardData(true); // true = only update trend chart
     });
 
+  function formatDateTimeForInput(date) {
+    // Format as YYYY-MM-DDThh:mm
+    return (
+      date.getFullYear() +
+      "-" +
+      String(date.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(date.getDate()).padStart(2, "0") +
+      "T" +
+      String(date.getHours()).padStart(2, "0") +
+      ":" +
+      String(date.getMinutes()).padStart(2, "0")
+    );
+  }
   // Date range filter change event
   document
     .getElementById("dateRangeFilter")
@@ -28,8 +42,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const yearSelectorContainer = document.getElementById(
         "yearSelectorContainer"
       );
+      const dateRangeContainer = document.getElementById("dateRangeContainer");
 
-      // Show or hide the year selector based on the selection
+      yearSelectorContainer.style.display = "none";
+      dateRangeContainer.style.display = "none";
+
       if (selectedValue === "year") {
         yearSelectorContainer.style.display = "block";
 
@@ -37,8 +54,24 @@ document.addEventListener("DOMContentLoaded", function () {
         if (document.getElementById("yearSelector").options.length <= 0) {
           populateYearSelector();
         }
-      } else {
-        yearSelectorContainer.style.display = "none";
+      } else if (selectedValue === "custom") {
+        dateRangeContainer.style.display = "block";
+
+        // Set default values for date inputs if they're empty
+        const startDate = document.getElementById("startDate");
+        const endDate = document.getElementById("endDate");
+
+        if (!startDate.value) {
+          // Set start date to beginning of current day
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          startDate.value = formatDateTimeForInput(today);
+        }
+        if (!endDate.value) {
+          // Set end date to current time
+          const now = new Date();
+          endDate.value = formatDateTimeForInput(now);
+        }
       }
     });
 
@@ -97,13 +130,18 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // Initial setup - check if year option is selected
+  // Initial setup - check if year or custom option is selected
   const initialDateRange = document.getElementById("dateRangeFilter").value;
   if (initialDateRange === "year") {
     document.getElementById("yearSelectorContainer").style.display = "block";
+    document.getElementById("dateRangeContainer").style.display = "none";
     populateYearSelector();
+  } else if (initialDateRange === "custom") {
+    document.getElementById("yearSelectorContainer").style.display = "none";
+    document.getElementById("dateRangeContainer").style.display = "block";
   } else {
     document.getElementById("yearSelectorContainer").style.display = "none";
+    document.getElementById("dateRangeContainer").style.display = "none";
   }
 
   // Initialize dashboard
@@ -135,6 +173,24 @@ document.addEventListener("DOMContentLoaded", function () {
               const date = new Date(item.Time * 1000);
               return date >= startOfYear && date <= endOfYear;
             });
+          }
+        } else if (dateRange === "custom") {
+          // Get values from date pickers
+          const startDateInput = document.getElementById("startDate").value;
+          const endDateInput = document.getElementById("endDate").value;
+
+          // Only apply filter if both dates are provided
+          if (startDateInput && endDateInput) {
+            const startDate = new Date(startDateInput);
+            const endDate = new Date(endDateInput);
+
+            // Convert to timestamp (in seconds) for comparison with data
+            const startTimestamp = Math.floor(startDate.getTime() / 1000);
+            const endTimestamp = Math.floor(endDate.getTime() / 1000);
+
+            filteredData = filteredData.filter(
+              (item) => item.Time >= startTimestamp && item.Time <= endTimestamp
+            );
           }
         } else if (
           dateRange === "7" ||
@@ -344,116 +400,115 @@ document.addEventListener("DOMContentLoaded", function () {
    * Chart showing ratings by day of week
    */
   function updateDayOfWeekChart(data) {
-  const originalDays = [
-    "Søndag",
-    "Mandag",
-    "Tirsdag",
-    "Onsdag",
-    "Torsdag",
-    "Fredag",
-    "Lørdag",
-  ];
+    const originalDays = [
+      "Søndag",
+      "Mandag",
+      "Tirsdag",
+      "Onsdag",
+      "Torsdag",
+      "Fredag",
+      "Lørdag",
+    ];
 
-  const dayCounts = Array(7).fill(0);
-  const dayRatings = Array(7).fill(0);
-  const hasDataForDay = Array(7).fill(false);
+    const dayCounts = Array(7).fill(0);
+    const dayRatings = Array(7).fill(0);
+    const hasDataForDay = Array(7).fill(false);
 
-  // Group data by day of week
-  data.forEach((item) => {
-    const date = new Date(item.Time * 1000);
-    const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-    dayCounts[dayOfWeek]++;
-    dayRatings[dayOfWeek] += item.Grade;
-    hasDataForDay[dayOfWeek] = true;
-  });
+    // Group data by day of week
+    data.forEach((item) => {
+      const date = new Date(item.Time * 1000);
+      const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+      dayCounts[dayOfWeek]++;
+      dayRatings[dayOfWeek] += item.Grade;
+      hasDataForDay[dayOfWeek] = true;
+    });
 
-  // Calculate averages - set null for days with no data
-  const dayAvgRatings = dayRatings.map((sum, index) =>
-    hasDataForDay[index] ? sum / dayCounts[index] : null
-  );
+    // Calculate averages - set null for days with no data
+    const dayAvgRatings = dayRatings.map((sum, index) =>
+      hasDataForDay[index] ? sum / dayCounts[index] : null
+    );
 
-  // Shift arrays to start from Monday (index 1)
-  const shiftArray = (arr) => arr.slice(1).concat(arr.slice(0, 1));
-  const days = shiftArray(originalDays);
-  const shiftedDayCounts = shiftArray(dayCounts);
-  const shiftedDayAvgRatings = shiftArray(dayAvgRatings);
+    // Shift arrays to start from Monday (index 1)
+    const shiftArray = (arr) => arr.slice(1).concat(arr.slice(0, 1));
+    const days = shiftArray(originalDays);
+    const shiftedDayCounts = shiftArray(dayCounts);
+    const shiftedDayAvgRatings = shiftArray(dayAvgRatings);
 
-  const ctx = document.getElementById("dayOfWeekChart").getContext("2d");
+    const ctx = document.getElementById("dayOfWeekChart").getContext("2d");
 
-  // Destroy previous chart if it exists
-  if (dayOfWeekChart) {
-    dayOfWeekChart.destroy();
-  }
+    // Destroy previous chart if it exists
+    if (dayOfWeekChart) {
+      dayOfWeekChart.destroy();
+    }
 
-  // Create new chart
-  dayOfWeekChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: days,
-      datasets: [
-        {
-          label: "Gns. Bedømmelse",
-          data: shiftedDayAvgRatings,
-          borderColor: "#3d5252",
-          backgroundColor: "rgba(61, 82, 82, 0.1)",
-          borderWidth: 2,
-          pointBackgroundColor: "#3d5252",
-          tension: 0.2,
-          yAxisID: "y",
-          spanGaps: true,
-        },
-        {
-          label: "Antal Bedømmelser",
-          data: shiftedDayCounts,
-          borderColor: "#e5c070",
-          backgroundColor: "rgba(229, 192, 112, 0.5)",
-          borderWidth: 1,
-          type: "bar",
-          yAxisID: "y1",
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          min: 1,
-          max: 3,
-          position: "left",
-          title: {
-            display: true,
-            text: "Gns. Bedømmelse",
+    // Create new chart
+    dayOfWeekChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: days,
+        datasets: [
+          {
+            label: "Gns. Bedømmelse",
+            data: shiftedDayAvgRatings,
+            borderColor: "#3d5252",
+            backgroundColor: "rgba(61, 82, 82, 0.1)",
+            borderWidth: 2,
+            pointBackgroundColor: "#3d5252",
+            tension: 0.2,
+            yAxisID: "y",
+            spanGaps: true,
           },
-        },
-        y1: {
-          beginAtZero: true,
-          position: "right",
-          grid: {
-            drawOnChartArea: false,
+          {
+            label: "Antal Bedømmelser",
+            data: shiftedDayCounts,
+            borderColor: "#e5c070",
+            backgroundColor: "rgba(229, 192, 112, 0.5)",
+            borderWidth: 1,
+            type: "bar",
+            yAxisID: "y1",
           },
-          title: {
-            display: true,
-            text: "Antal",
-          },
-        },
+        ],
       },
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              if (context.raw === null) return null;
-              const label = context.dataset.label || "";
-              return `${label}: ${context.raw?.toFixed(1) || "Ingen data"}`;
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            min: 1,
+            max: 3,
+            position: "left",
+            title: {
+              display: true,
+              text: "Gns. Bedømmelse",
+            },
+          },
+          y1: {
+            beginAtZero: true,
+            position: "right",
+            grid: {
+              drawOnChartArea: false,
+            },
+            title: {
+              display: true,
+              text: "Antal",
+            },
+          },
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                if (context.raw === null) return null;
+                const label = context.dataset.label || "";
+                return `${label}: ${context.raw?.toFixed(1) || "Ingen data"}`;
+              },
             },
           },
         },
       },
-    },
-  });
-}
-
+    });
+  }
 
   /**
    * Chart showing waiter acknowledgments

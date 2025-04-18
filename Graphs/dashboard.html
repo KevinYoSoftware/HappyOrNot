@@ -1,180 +1,224 @@
 <!DOCTYPE html>
 <html lang="da">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Restaurant Feedback Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="dashboardcss.css" />
-</head>
-<body>
-  <div class="dashboard-container">
-    <div class="dashboard-header">
-      <h1><i class="fas fa-chart-bar mr-3"></i>Restaurant Feedback Dashboard</h1>
-    </div>
-    
-    <!-- Filters -->
-    <div class="filter-bar">
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="dateRangeFilter">Tidsperiode:</label>
-            <select id="dateRangeFilter" class="form-control">
-              <option value="7">Seneste 7 dage</option>
-              <option value="30" selected>Seneste 30 dage</option>
-              <option value="90">Seneste 90 dage</option>
-              <option value="365">Seneste år</option>
-              <option value="year">Vælg specifikt år</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="ratingFilter">Bedømmelse:</label>
-            <select id="ratingFilter" class="form-control">
-              <option value="all" selected>Alle</option>
-              <option value="1">Kan forbedres (1)</option>
-              <option value="2">Ok (2)</option>
-              <option value="3">Super (3)</option>
-            </select>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label>&nbsp;</label>
-            <button id="applyFilters" class="btn btn-primary btn-block">Anvend filtre</button>
-          </div>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Youku Feedback Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="stylesheet" href="dashboardcss.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <div class="dashboard-header">
+        <h1>
+          <i class="fas fa-chart-bar mr-3"></i>Youku Feedback Dashboard
+        </h1>
       </div>
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <div class="form-group mb-0" id="yearSelectorContainer">
-            <select id="yearSelector" class="form-control">
-              <!-- Will be populated dynamically -->
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Summary Cards -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <div class="dashboard-card text-center">
-          <div class="card-header">Gennemsnit</div>
-          <div class="card-body">
-            <div id="averageRating" class="summary-value">0</div>
-            <div class="summary-label">Gennemsnitlig bedømmelse</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="dashboard-card text-center">
-          <div class="card-header">Antal</div>
-          <div class="card-body">
-            <div id="totalFeedback" class="summary-value">0</div>
-            <div class="summary-label">Antal bedømmelser</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="dashboard-card text-center">
-          <div class="card-header">Anerkendelser</div>
-          <div class="card-body">
-            <div id="totalAcknowledgments" class="summary-value">0</div>
-            <div class="summary-label">Tjener anerkendelser</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="dashboard-card text-center">
-          <div class="card-header">Største Problem</div>
-          <div class="card-body">
-            <div id="topIssue" class="summary-value">-</div>
-            <div class="summary-label">Hyppigste problem</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Charts Row 1 -->
-    <div class="row">
-      <div class="col-md-6">
-        <div class="dashboard-card">
-          <div class="card-header">Bedømmelser efter tid på dagen</div>
-          <div class="card-body">
-            <div class="chart-container">
-              <canvas id="timeOfDayChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="dashboard-card">
-          <div class="card-header">Bedømmelser efter ugedag</div>
-          <div class="card-body">
-            <div class="chart-container">
-              <canvas id="dayOfWeekChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Charts Row 2 -->
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <div class="dashboard-card">
-          <div class="card-header">Tjener anerkendelser</div>
-          <div class="card-body">
-            <div class="chart-container">
-              <canvas id="waiterPerformanceChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="dashboard-card">
-          <div class="card-header">Forbedringsområder</div>
-          <div class="card-body">
-            <div class="chart-container">
-              <canvas id="improvementAreasChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Trend Chart -->
-    <div class="row mt-4 mb-5">
-      <div class="col-12">
-        <div class="dashboard-card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Trend over tid</span>
-            <div class="form-inline">
-              <select id="trendChartType" class="form-control form-control-sm">
-                <option value="ratings" selected>Vis gennemsnitlig bedømmelse</option>
-                <option value="food">Vis madproblemer</option>
-                <option value="service">Vis serviceproblemer</option>
-                <option value="atmosphere">Vis oplevelsesproblemer</option>
-                <option value="count">Vis antal bedømmelser</option>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="dateRangeFilter">Tidsperiode:</label>
+              <select id="dateRangeFilter" class="form-control">
+                <option value="7">Seneste 7 dage</option>
+                <option value="30" selected>Seneste 30 dage</option>
+                <option value="90">Seneste 90 dage</option>
+                <option value="365">Seneste år</option>
+                <option value="year">Vælg specifikt år</option>
+                <option value="custom">Vælg dato</option>
               </select>
             </div>
           </div>
-          <div class="card-body">
-            <div class="chart-container" style="height: 350px;">
-              <canvas id="trendChart"></canvas>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="ratingFilter">Bedømmelse:</label>
+              <select id="ratingFilter" class="form-control">
+                <option value="all" selected>Alle</option>
+                <option value="1">Kan forbedres (1)</option>
+                <option value="2">Ok (2)</option>
+                <option value="3">Super (3)</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <button id="applyFilters" class="btn btn-primary btn-block">
+                Anvend filtre
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group mb-0" id="yearSelectorContainer">
+              <select id="yearSelector" class="form-control">
+                <!-- Will be populated dynamically -->
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div
+            class="form-group mb-0"
+            id="dateRangeContainer"
+            style="display: none"
+          >
+            <div class="row">
+              <div class="col-md-6">
+                <label for="startDate">Fra:</label>
+                <input
+                  type="datetime-local"
+                  id="startDate"
+                  class="form-control"
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="endDate">Til:</label>
+                <input
+                  type="datetime-local"
+                  id="endDate"
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="dashboard-card text-center">
+            <div class="card-header">Gennemsnit</div>
+            <div class="card-body">
+              <div id="averageRating" class="summary-value">0</div>
+              <div class="summary-label">Gennemsnitlig bedømmelse</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="dashboard-card text-center">
+            <div class="card-header">Antal</div>
+            <div class="card-body">
+              <div id="totalFeedback" class="summary-value">0</div>
+              <div class="summary-label">Antal bedømmelser</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="dashboard-card text-center">
+            <div class="card-header">Anerkendelser</div>
+            <div class="card-body">
+              <div id="totalAcknowledgments" class="summary-value">0</div>
+              <div class="summary-label">Tjener anerkendelser</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="dashboard-card text-center">
+            <div class="card-header">Største Problem</div>
+            <div class="card-body">
+              <div id="topIssue" class="summary-value">-</div>
+              <div class="summary-label">Hyppigste problem</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 1 -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">Bedømmelser efter tid på dagen</div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="timeOfDayChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">Bedømmelser efter ugedag</div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="dayOfWeekChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row 2 -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">Tjener anerkendelser</div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="waiterPerformanceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="dashboard-card">
+            <div class="card-header">Forbedringsområder</div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="improvementAreasChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trend Chart -->
+      <div class="row mt-4 mb-5">
+        <div class="col-12">
+          <div class="dashboard-card">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <span>Trend over tid</span>
+              <div class="form-inline">
+                <select
+                  id="trendChartType"
+                  class="form-control form-control-sm"
+                >
+                  <option value="ratings" selected>
+                    Vis gennemsnitlig bedømmelse
+                  </option>
+                  <option value="food">Vis madproblemer</option>
+                  <option value="service">Vis serviceproblemer</option>
+                  <option value="atmosphere">Vis oplevelsesproblemer</option>
+                  <option value="count">Vis antal bedømmelser</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" style="height: 350px">
+                <canvas id="trendChart"></canvas>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-  <script src="dashboard.js"></script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="dashboard.js"></script>
+  </body>
 </html>

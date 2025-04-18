@@ -12,6 +12,17 @@ $(document).ready(function () {
   let countdownInterval = null;
   let animationInterval = null;
 
+  // Click logo to reset the form and go back
+  $(document).on("click", ".logo-container", function () {
+    stopCountdownTimer();
+    resetForm();
+    showSection("rating-section");
+    $(this).addClass("logo-clicked");
+    setTimeout(function () {
+      $(".section-logo").removeClass("logo-clicked");
+    }, 300);
+  });
+
   // Start the emoji animation when the page loads
   startEmojiAnimation();
 
@@ -235,7 +246,7 @@ $(document).ready(function () {
   }
   function saveAndShowConfirmation() {
     feedbackData.Time = Math.floor(Date.now() / 1000); // Unix timestamp
-    
+
     submitFeedback(feedbackData);
     generatePersonalizedFeedback();
     showSection("confirmation-section");
@@ -244,12 +255,12 @@ $(document).ready(function () {
 
   function startCountdownTimer() {
     stopCountdownTimer();
-    let timeLeft = 5;
+    let timeLeft = 10;
 
     // Start the countdown
     countdownInterval = setInterval(function () {
       timeLeft--;
-      
+
       if (timeLeft <= 0) {
         stopCountdownTimer();
         resetForm();
